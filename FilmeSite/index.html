@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Infinity Filmes</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f0f0f;
+  color: white;
+  text-align: center;
+}
+
+header {
+  background: #e50914;
+  padding: 20px;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.container {
+  padding: 30px;
+}
+
+button {
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  background: #e50914;
+  color: white;
+  border-radius: 5px;
+}
+
+button:hover {
+  background: #ff1f2a;
+}
+
+input {
+  padding: 10px;
+  width: 250px;
+  margin: 5px;
+}
+
+video {
+  margin-top: 20px;
+  max-width: 90%;
+  border-radius: 10px;
+}
+
+.admin {
+  display: none;
+  background: #1a1a1a;
+  padding: 20px;
+  margin-top: 30px;
+  border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🎬 Infinity Filmes</header>
+
+<div class="container">
+
+  <h2 id="tituloFilme">Nenhum filme publicado</h2>
+
+  <p id="msg">Se queres assistir, precisa de ver um anúncio</p>
+
+  <button onclick="verAnuncio()">Ver anúncio</button>
+
+  <br><br>
+
+  <video id="video" controls style="display:none;"></video>
+
+  <!-- LOGIN ADMIN -->
+  <div id="login">
+    <h3>🔒 Login Admin</h3>
+    <input id="user" placeholder="Usuário"><br>
+    <input id="pass" type="password" placeholder="Senha"><br><br>
+    <button onclick="login()">Entrar</button>
+  </div>
+
+  <!-- PAINEL ADMIN -->
+  <div class="admin" id="admin">
+    <h3>🎛️ Painel do Administrador</h3>
+
+    <input id="novoTitulo" placeholder="Título do filme"><br>
+    <input id="novoLink" placeholder="Link do vídeo (mp4)"><br><br>
+
+    <button onclick="publicar()">Publicar filme</button>
+    <button onclick="logout()">Sair</button>
+
+    <h4>📊 Estatísticas</h4>
+    <p id="stats"></p>
+  </div>
+
+</div>
+
+<script>
+// CONFIGURAÇÕES ADMIN
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "1234";
+
+// CONTADORES
+let visitas = Number(localStorage.getItem("visitas") || 0);
+let ganhos = Number(localStorage.getItem("ganhos") || 0);
+
+visitas++;
+localStorage.setItem("visitas", visitas);
+
+// CARREGAR FILME
+const titulo = localStorage.getItem("filmeTitulo");
+const link = localStorage.getItem("filmeLink");
+
+if (titulo && link) {
+  document.getElementById("tituloFilme").innerText = titulo;
+  document.getElementById("video").src = link;
+}
+
+// ANÚNCIO
+function verAnuncio() {
+  window.open("https://example.com", "_blank");
+  ganhos++;
+  localStorage.setItem("ganhos", ganhos);
+
+  document.getElementById("video").style.display = "block";
+  document.getElementById("msg").innerText = "Obrigado por assistir o anúncio!";
+}
+
+// LOGIN
+function login() {
+  const u = document.getElementById("user").value;
+  const p = document.getElementById("pass").value;
+
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    localStorage.setItem("logado", "sim");
+    mostrarAdmin();
+  } else {
+    alert("Login incorreto");
+  }
+}
+
+function mostrarAdmin() {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("admin").style.display = "block";
+  document.getElementById("stats").innerText =
+    `Visitas: ${visitas} | Ganhos simulados: ${ganhos}`;
+}
+
+// PUBLICAR FILME
+function publicar() {
+  const t = document.getElementById("novoTitulo").value;
+  const l = document.getElementById("novoLink").value;
+
+  localStorage.setItem("filmeTitulo", t);
+  localStorage.setItem("filmeLink", l);
+
+  location.reload();
+}
+
+// LOGOUT
+function logout() {
+  localStorage.removeItem("logado");
+  location.reload();
+}
+
+// AUTO LOGIN
+if (localStorage.getItem("logado") === "sim") {
+  mostrarAdmin();
+}
+</script>
+
+</body>
+</html>
